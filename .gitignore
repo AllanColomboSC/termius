@@ -1,0 +1,22 @@
+# Build output
+/target/
+/gen/
+/shots/
+/downloads/
+/web-vendor/node_modules/
+
+# Never published: a commercial interface font for personal builds only, and raw data read from the original app
+/ui/fonts/private/
+/ui/themes-raw.json
+
+# Phone app (see also mobile/.gitignore)
+/mobile/build/
+/mobile/android/local.properties
+/mobile/android/.gradle/
+/mobile/android/key.properties
+*.jks
+*.keystore
+/mobile/ios/Flutter/ephemeral/
+/mobile/ios/Flutter/Generated.xcconfig
+/mobile/ios/Flutter/flutter_export_environment.sh
+/mobile/ios/Pods/

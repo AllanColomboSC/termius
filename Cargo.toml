@@ -1,0 +1,43 @@
+[package]
+name = "shellbox"
+version = "1.0.0"
+description = "Free SSH client: hosts, terminal tabs, SFTP, keychain, port forwarding and snippets"
+edition = "2021"
+default-run = "shellbox"
+
+[[bin]]
+name = "shellbox"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+russh = { version = "0.65", default-features = false, features = ["flate2", "ring", "rsa"] }
+russh-sftp = "2"
+portable-pty = "0.9"
+serialport = "4"
+base64 = "0.22"
+dirs = "6"
+rand = "0.10"
+anyhow = "1"
+png = "0.17"
+rfd = "0.15"
+chrono = "0.4"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Storage_Xps", "Win32_UI_WindowsAndMessaging"] }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 2

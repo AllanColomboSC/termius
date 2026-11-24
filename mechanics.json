@@ -1,0 +1,284 @@
+{
+  "version": 1,
+  "values": [
+    {
+      "name": "top tab bar height",
+      "group": "layout",
+      "value": 51,
+      "unit": "px",
+      "source": "ui-process bundle: paneSplit calc(100% - 51px)"
+    },
+    {
+      "name": "side menu width",
+      "group": "layout",
+      "value": 185,
+      "unit": "px",
+      "source": "ui-process bundle: visible.width 185"
+    },
+    {
+      "name": "side menu width under 800px",
+      "group": "layout",
+      "value": 68,
+      "unit": "px",
+      "source": "ui-process bundle: media max-width 800px"
+    },
+    {
+      "name": "side menu item height",
+      "group": "layout",
+      "value": 36,
+      "unit": "px",
+      "source": "ui-process bundle: FDe root height 36px"
+    },
+    {
+      "name": "side menu order",
+      "group": "layout",
+      "value": "Hosts, Keychain, Port Forwarding, Snippets, Known Hosts, Logs",
+      "source": "ui-process bundle: baseTabs/leftPanelTabs"
+    },
+    {
+      "name": "side menu background",
+      "group": "colours",
+      "value": "#282b3d",
+      "source": "reconnectSaga css --dark-grey-3"
+    },
+    {
+      "name": "accent blue",
+      "group": "colours",
+      "value": "#2091f6",
+      "source": "reconnectSaga css --blue"
+    },
+    {
+      "name": "accent green",
+      "group": "colours",
+      "value": "#21b568",
+      "source": "reconnectSaga css --green"
+    },
+    {
+      "name": "minimum window height",
+      "group": "layout",
+      "value": 440,
+      "unit": "px",
+      "source": "main-process.js minHeight:440"
+    },
+    {
+      "name": "settings window size",
+      "group": "layout",
+      "value": "1100x680",
+      "source": "main-process.js preferences window"
+    },
+    {
+      "name": "default window size",
+      "group": "layout",
+      "value": "1280x800",
+      "estimated": true
+    },
+    {
+      "name": "default text size",
+      "group": "terminal",
+      "value": 14,
+      "source": "reconnectSaga bundle defaultFontSize=14"
+    },
+    {
+      "name": "minimum text size",
+      "group": "terminal",
+      "value": 4,
+      "source": "reconnectSaga bundle minFontSize=4"
+    },
+    {
+      "name": "maximum text size",
+      "group": "terminal",
+      "value": 40,
+      "source": "reconnectSaga bundle maxFontSize=40"
+    },
+    {
+      "name": "default font",
+      "group": "terminal",
+      "value": "Source Code Pro",
+      "source": "reconnectSaga bundle defaultFontFamily"
+    },
+    {
+      "name": "default theme",
+      "group": "terminal",
+      "value": "default dark (bg #141729, fg #21b568)",
+      "source": "reconnectSaga bundle colorSchemesArray[0]"
+    },
+    {
+      "name": "theme count",
+      "group": "terminal",
+      "value": 64,
+      "source": "reconnectSaga bundle colorSchemesArray"
+    },
+    {
+      "name": "scrollback rows",
+      "group": "terminal",
+      "value": 40000,
+      "source": "reconnectSaga bundle defaultScrollbackSize=4e4"
+    },
+    {
+      "name": "keepalive interval",
+      "group": "terminal",
+      "value": 0,
+      "unit": "s",
+      "source": "index-4ce1d2e4.js Keepalive Interval default 0"
+    },
+    {
+      "name": "terminal type",
+      "group": "terminal",
+      "value": "xterm-256color",
+      "source": "index-4ce1d2e4.js Et list"
+    },
+    {
+      "name": "right click to paste",
+      "group": "terminal",
+      "value": false,
+      "source": "reconnectSaga reducers rightClickToPaste default false"
+    },
+    {
+      "name": "bell sound",
+      "group": "terminal",
+      "value": false,
+      "source": "reconnectSaga reducers bellSound default false"
+    },
+    {
+      "name": "autoreconnect retries",
+      "group": "terminal",
+      "value": 3,
+      "estimated": true
+    },
+    {
+      "name": "new tab shortcut",
+      "group": "controls",
+      "value": "Ctrl+T",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "close tab shortcut",
+      "group": "controls",
+      "value": "Ctrl+Shift+W",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "local terminal shortcut",
+      "group": "controls",
+      "value": "Ctrl+L",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "command palette shortcut",
+      "group": "controls",
+      "value": "Ctrl+K",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "jump to shortcut",
+      "group": "controls",
+      "value": "Ctrl+J",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "port forwarding shortcut",
+      "group": "controls",
+      "value": "Ctrl+P",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "snippets shortcut",
+      "group": "controls",
+      "value": "Ctrl+Shift+S",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "terminal search shortcut",
+      "group": "controls",
+      "value": "Ctrl+Shift+F",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "copy / paste shortcuts",
+      "group": "controls",
+      "value": "Ctrl+Shift+C / Ctrl+Shift+V",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "side panel shortcut",
+      "group": "controls",
+      "value": "Ctrl+.",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "serial shortcut",
+      "group": "controls",
+      "value": "Ctrl+Alt+S",
+      "source": "reconnectSaga PC_HOTKEYS"
+    },
+    {
+      "name": "settings entry",
+      "group": "layout",
+      "value": "menu button left of minimize: Vaults, SFTP, Settings (Ctrl+,)",
+      "source": "reconnectSaga getSystemTopBarActions + main-process.js menu template"
+    },
+    {
+      "name": "host usage refresh interval",
+      "group": "host usage",
+      "value": 10,
+      "unit": "s",
+      "source": "person's request (not in the original); app/src/stats.rs, ui/js/usage.js, mobile/lib/usage.dart"
+    },
+    {
+      "name": "host usage offline retry",
+      "group": "host usage",
+      "value": 60,
+      "unit": "s",
+      "estimated": true
+    },
+    {
+      "name": "host usage CPU sample window",
+      "group": "host usage",
+      "value": 1,
+      "unit": "s",
+      "source": "two /proc/stat samples 1 s apart, person's request (not in the original); app/src/stats.rs, ui/js/usage.js, mobile/lib/usage.dart"
+    },
+    {
+      "name": "host usage memory used",
+      "group": "host usage",
+      "value": "MemTotal - MemAvailable (old kernels: MemFree+Buffers+Cached)",
+      "source": "person's request (not in the original); app/src/stats.rs, ui/js/usage.js, mobile/lib/usage.dart"
+    },
+    {
+      "name": "host usage battery",
+      "group": "host usage",
+      "value": "/sys/class/power_supply/BAT*/capacity and status; several batteries averaged",
+      "source": "person's watch command"
+    },
+    {
+      "name": "host usage only when login works",
+      "group": "host usage",
+      "value": true,
+      "source": "person's request: needs a saved username and an already trusted host key; failed login waits until the saved login changes"
+    },
+    {
+      "name": "host usage colour thresholds",
+      "group": "host usage",
+      "value": "CPU 70/90 %, RAM 75/90 %, battery 30/15 %",
+      "estimated": true
+    },
+    {
+      "name": "import from SSH reads every file in ~/.ssh and keeps private keys",
+      "group": "keychain",
+      "value": true,
+      "source": "original index-063ee049.js autoImportSshConfig: readdirSync(home/.ssh), keyPaths"
+    },
+    {
+      "name": "try this computer's keys when a host has none",
+      "group": "connections",
+      "value": true,
+      "source": "rebuild choice matching OpenSSH defaults; Settings > Terminal toggle (not in the original)"
+    },
+    {
+      "name": "most unlocked ~/.ssh keys tried",
+      "group": "connections",
+      "value": 5,
+      "estimated": true
+    }
+  ]
+}

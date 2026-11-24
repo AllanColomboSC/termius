@@ -1,0 +1,11 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # material.dart still works on this Flutter version; moving to material_ui can come later.
+    deprecated_member_use: ignore
+    use_null_aware_elements: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
