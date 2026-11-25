@@ -1,14 +1,17 @@
 // Shellbox: a free SSH client laid out like the one the person is used to.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod containers;
 mod forward;
 mod keys;
 mod live;
+mod monitor;
 mod sftp;
 mod shot;
 mod ssh;
 mod stats;
 mod term;
+mod traefik;
 #[cfg(test)]
 mod tests;
 
@@ -23,6 +26,7 @@ type Terms = Arc<term::Terms>;
 type Sftps = Arc<sftp::Sftps>;
 type Forwards = Arc<forward::Forwards>;
 type Usage = Arc<stats::Stats>;
+type Proxies = Arc<traefik::Traefik>;
 
 static UI_READY: AtomicBool = AtomicBool::new(false);
 
@@ -220,6 +224,43 @@ async fn host_stats_forget(st: State<'_, Usage>, id: Option<String>) -> Result<(
     Ok(())
 }
 
+// ---------- Servers screen (live numbers) ----------
+
+#[tauri::command]
+async fn host_monitor(st: State<'_, Usage>, id: String, target: ssh::Target) -> Result<monitor::HostMonitor, String> {
+    monitor::poll(&st, id, target).await
+}
+
+#[tauri::command]
+async fn host_traefik(st: State<'_, Usage>, tr: State<'_, Proxies>, id: String, target: ssh::Target) -> Result<traefik::Batch, String> {
+    traefik::poll(&tr, &st, id, target).await
+}
+
+#[tauri::command]
+async fn host_traefik_forget(tr: State<'_, Proxies>, id: String) -> Result<(), String> {
+    traefik::forget(&tr, &id).await;
+    Ok(())
+}
+
+// ---------- containers (Docker / Easypanel) ----------
+
+#[tauri::command]
+async fn host_containers(st: State<'_, Usage>, id: String, target: ssh::Target) -> Result<containers::HostContainers, String> {
+    containers::poll(&st, id, target).await
+}
+
+#[tauri::command]
+async fn container_action(
+    st: State<'_, Usage>,
+    id: String,
+    target: ssh::Target,
+    kind: String,
+    name: String,
+    action: String,
+) -> Result<String, String> {
+    containers::action(&st, id, target, kind, name, action).await
+}
+
 // ---------- keychain ----------
 
 #[tauri::command]
@@ -346,6 +387,7 @@ fn main() {
         .manage(Sftps::default())
         .manage(Forwards::default())
         .manage(Usage::default())
+        .manage(Proxies::default())
         .invoke_handler(tauri::generate_handler![
             data_load, data_save, data_location,
             term_open_ssh, term_open_local, term_open_serial, term_write, term_resize, term_close,
@@ -353,6 +395,7 @@ fn main() {
             sftp_connect, sftp_list, sftp_mkdir, sftp_rename, sftp_remove, sftp_download, sftp_upload, sftp_close,
             local_home, local_list, local_mkdir, local_rename, local_remove, local_copy,
             pf_start, pf_stop, key_generate, key_inspect, local_ssh_keys, host_stats, host_stats_forget,
+            host_containers, container_action, host_monitor, host_traefik, host_traefik_forget,
             pick_files, save_text_file, read_text_file, open_settings, ui_ready, shot_quick, sessions_reset
         ])
         .setup(move |app| {

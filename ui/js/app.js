@@ -1,8 +1,11 @@
 // Starts the app: top tabs, vault side menu, pages, keyboard shortcuts and the settings window.
 (function () {
-  // Side menu order read from the original: Hosts, Keychain, Port Forwarding, Snippets, Known Hosts, Logs.
+  // Side menu order read from the original: Hosts, Keychain, Port Forwarding, Snippets, Known Hosts, Logs,
+  // with Servers (live numbers) and Containers (Docker / Easypanel), added at the person's request, right after Hosts.
   const VAULT_PAGES = [
     ["hosts", "Hosts", "hosts", () => App.hosts],
+    ["servers", "Servers", "pulse", () => App.servers],
+    ["containers", "Containers", "box", () => App.containers],
     ["keychain", "Keychain", "keychain", () => App.keychain],
     ["forwarding", "Port Forwarding", "forward", () => App.forwarding],
     ["snippets", "Snippets", "snippets", () => App.snippets],
@@ -299,12 +302,14 @@
     await App.invoke("sessions_reset").catch(() => {});
     App.terminal.init();
     App.usage.start();
+    App.containers.start();
+    App.servers.start();
     window.addEventListener("keydown", onKey, true);
     App.openTab("vaults");
     if (App.screenshotMode) {
       const v = App.screenshotView;
       try {
-        if (["keychain", "forwarding", "snippets", "known", "logs"].includes(v)) App.openVaultPage(v);
+        if (["servers", "containers", "keychain", "forwarding", "snippets", "known", "logs"].includes(v)) App.openVaultPage(v);
         else if (v === "sftp") App.openTab("sftp");
         else if (v === "local") App.terminal.openLocal();
         else if (v === "newhost") App.hosts.editHost(App.data.hosts[0]);
