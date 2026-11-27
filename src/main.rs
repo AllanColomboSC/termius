@@ -1,6 +1,7 @@
 // Shellbox: a free SSH client laid out like the one the person is used to.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod cloudflare;
 mod containers;
 mod dba;
 mod forward;
@@ -338,8 +339,8 @@ fn read_text_file(path: String) -> Result<String, String> {
 }
 
 #[tauri::command]
-fn open_settings(app: AppHandle, section: Option<String>) -> Result<(), String> {
-    let hash = section.unwrap_or_else(|| "terminal".into());
+async fn open_settings(app: AppHandle, section: Option<String>) -> Result<(), String> {
+    let hash = section.unwrap_or_else(|| "general".into());
     if let Some(w) = app.get_webview_window("settings") {
         let _ = w.eval(&format!("window.location.hash = '#settings/{hash}'"));
         let _ = w.show();
@@ -412,7 +413,7 @@ fn main() {
         .manage(Usage::default())
         .manage(Proxies::default())
         .invoke_handler(tauri::generate_handler![
-            data_load, data_save, data_location,
+            data_load, data_save, data_location, cloudflare::cf_get, cloudflare::cf_graphql,
             term_open_ssh, term_open_local, term_open_serial, term_write, term_resize, term_close,
             serial_ports, default_shell,
             sftp_connect, sftp_list, sftp_mkdir, sftp_rename, sftp_remove, sftp_download, sftp_upload, sftp_close,

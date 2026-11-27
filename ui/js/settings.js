@@ -1,7 +1,7 @@
 // Settings window: Account, Terminal, SFTP, Logs and Shortcuts (the original's sections, in its order).
 (function () {
   const F = App.forms;
-  const SECTIONS = [["account", "Account"], ["terminal", "Terminal"], ["sftp", "SFTP"], ["logs", "Logs"], ["shortcuts", "Shortcuts"]];
+  const SECTIONS = [["general", "General"], ["account", "Account"], ["terminal", "Terminal"], ["sftp", "SFTP"], ["logs", "Logs"], ["shortcuts", "Shortcuts"]];
   // The original's "PC hotkeys" preset (see MECHANICS.md).
   App.SHORTCUTS = [
     ["Copy from Terminal", "Ctrl+Shift+C"], ["Paste to Terminal", "Ctrl+Shift+V"], ["Select All in Terminal", "Ctrl+Shift+A"],
@@ -12,7 +12,7 @@
   ];
 
   App.renderSettings = (root) => {
-    const section = (location.hash.split("/")[1] || "terminal").toLowerCase();
+    const section = ((App.screenshotMode ? App.screenshotView.split("-")[1] : location.hash.split("/")[1]) || "general").toLowerCase();
     root.innerHTML = "";
     const wrap = h("div", { class: "settings" });
     const nav = h("div", { class: "settings-nav" });
@@ -26,6 +26,37 @@
     root.append(wrap);
     const s = App.data.settings;
     const save = () => { App.save(); };
+
+    if (section === "general") {
+      body.append(h("h2", {}, "General"));
+      body.append(h("div", { class: "set-group" },
+        h("div", { class: "set-row" }, h("div", {}, h("div", { class: "lbl" }, "Interface language"), h("div", { class: "desc" }, "Choose the language of menus, buttons and messages. Text without a translation stays in English.")),
+          h("div", { style: "width:220px" }, F.select(s, "language", [{ value: "en", label: "English" }, { value: "pt-BR", label: "Português (Brasil)" }], { onChange: () => App.applyLanguage() })))));
+
+      body.append(h("h3", {}, "Side menu"));
+      const pages = App.VAULT_PAGES || [];
+      const hiddenList = () => (Array.isArray(s.sidebarHidden) ? s.sidebarHidden : (s.sidebarHidden = []));
+      body.append(h("div", { class: "set-group" },
+        h("div", { class: "set-row" }, h("div", {}, h("div", { class: "lbl" }, "Side menu mode"), h("div", { class: "desc" }, "Expanded shows icons and names, collapsed shows only icons, hidden removes the side menu (use the arrow next to Vaults to move around).")),
+          h("div", { style: "width:220px" }, F.select(s, "sidebarMode", [{ value: "expanded", label: "Expanded" }, { value: "collapsed", label: "Collapsed (icons only)" }, { value: "hidden", label: "Hidden" }])))));
+      body.append(h("h3", {}, "Items in the side menu"));
+      body.append(h("div", { class: "desc", style: "margin:-6px 0 12px;color:var(--text-2)" }, "Choose which screens appear in the side menu. Hosts always stays."));
+      const g = h("div", { class: "set-group" });
+      for (const p of pages) {
+        const locked = p.id === "hosts";
+        const state = { on: locked || !hiddenList().includes(p.id) };
+        const tgl = F.toggle(state, "on", { onChange: (on) => { s.sidebarHidden = hiddenList().filter((x) => x !== p.id); if (!on) s.sidebarHidden.push(p.id); save(); } });
+        if (locked) { tgl.disabled = true; tgl.style.opacity = ".5"; }
+        g.append(h("div", { class: "set-row" },
+          h("div", { style: "display:flex;align-items:center;gap:12px" }, h("span", { class: "nav-icon", style: "display:grid;place-items:center;width:24px", html: Icon(p.icon, 16) }), h("div", { class: "lbl" }, p.label)),
+          locked ? h("span", { class: "desc" }, "Always shown") : tgl));
+      }
+      body.append(g);
+      const reset = h("button", { class: "btn" }, "Reset to default");
+      reset.onclick = () => { s.sidebarHidden = []; s.sidebarMode = "expanded"; save(); App.renderSettings(document.getElementById("main")); };
+      body.append(reset);
+      return;
+    }
 
     if (section === "account") {
       body.append(h("h2", {}, "Account"));

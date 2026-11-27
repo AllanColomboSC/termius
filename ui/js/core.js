@@ -44,6 +44,9 @@
     sort: "az",
     uiTheme: "light", paletteVersion: 1,
     uiMotion: "system",
+    language: App.defaultLanguage ? App.defaultLanguage() : "en",
+    sidebarMode: "expanded",
+    sidebarHidden: [],
   });
 
   const empty = () => ({

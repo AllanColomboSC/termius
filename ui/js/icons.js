@@ -48,6 +48,7 @@
     fido: '<rect x="7" y="2" width="10" height="20" rx="3"/><circle cx="12" cy="8" r="2"/>',
     globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>',
     min: '<path d="M5 12h14"/>',
+    panel: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     max: '<rect x="5" y="5" width="14" height="14" rx="1"/>',
     check: '<path d="M5 12l5 5L20 7"/>',
