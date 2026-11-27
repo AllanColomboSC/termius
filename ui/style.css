@@ -709,3 +709,32 @@ line.s-gridline { stroke: var(--divider); stroke-width: 1; }
 .s-tr-path { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: "Cascadia Mono", Consolas, monospace; font-size: 11px; }
 .s-tr-time { color: var(--text-2); white-space: nowrap; }
 .s-tr-err > span:last-child { text-align: right; }
+
+/* ---------- Databases screen (PostgreSQL, MySQL, Redis) ---------- */
+.d-card { background: var(--app-bg); border-radius: var(--radius-m); padding: 12px; margin: 4px 0 10px; display: flex; flex-direction: column; gap: 12px; }
+body:not(.light) .d-card { background: var(--dark-grey-2); }
+.d-card .s-stat { background: var(--card-bg); }
+.d-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.d-top .grow { flex: 1; }
+.d-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.d-image { font-size: 11px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.d-kind { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; padding: 2px 7px; border-radius: 4px; background: var(--blue-a15); color: var(--blue); flex: 0 0 auto; }
+.d-kind.mysql { background: #e8a33d26; color: #c9861f; }
+.d-kind.redis { background: #f25e6122; color: #c84447; }
+.d-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.d-err { margin-top: 4px; font-size: 11px; color: var(--text-2); font-family: ui-monospace, Consolas, monospace; word-break: break-word; }
+.d-sec { display: flex; flex-direction: column; gap: 4px; }
+.d-table { display: flex; flex-direction: column; }
+.d-row { display: grid; grid-template-columns: var(--cols); gap: 12px; align-items: baseline; padding: 5px 6px; border-radius: var(--radius-s); font-size: 12px; min-width: 0; }
+.d-row > div { min-width: 0; }
+.d-row.click { cursor: pointer; }
+.d-row.click:hover { background: var(--card-hover); }
+.d-head { color: var(--text-2); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+.d-row .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.d-row .d-main { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.d-row .mono { font-family: ui-monospace, Consolas, monospace; font-size: 11px; }
+.d-row .d-dim { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.d-row.warn .num:first-child { color: #c9861f; font-weight: 600; }
+.d-row.bad .num:first-child { color: var(--red); font-weight: 600; }
+@media (max-width: 1000px) { .d-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.icon-btn.danger:hover { color: var(--red); }

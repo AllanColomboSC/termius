@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod containers;
+mod dba;
 mod forward;
 mod keys;
 mod live;
@@ -39,7 +40,14 @@ fn data_file() -> PathBuf {
 
 #[tauri::command]
 fn data_load() -> String {
-    std::fs::read_to_string(data_file()).unwrap_or_default()
+    // Hosts live in the user's data folder, not next to the program, so they survive moving or
+    // replacing the .exe. If the file is missing or unreadable, the backup of the previous save is used.
+    let path = data_file();
+    let valid = |t: &String| serde_json::from_str::<serde_json::Value>(t).is_ok();
+    match std::fs::read_to_string(&path) {
+        Ok(t) if valid(&t) => t,
+        _ => std::fs::read_to_string(path.with_extension("json.bak")).ok().filter(valid).unwrap_or_default(),
+    }
 }
 
 #[tauri::command]
@@ -47,6 +55,9 @@ fn data_save(json: String) -> Result<(), String> {
     let path = data_file();
     if let Some(dir) = path.parent() {
         std::fs::create_dir_all(dir).map_err(|e| e.to_string())?;
+    }
+    if path.exists() {
+        let _ = std::fs::copy(&path, path.with_extension("json.bak"));
     }
     let tmp = path.with_extension("json.tmp");
     std::fs::write(&tmp, json).map_err(|e| e.to_string())?;
@@ -261,6 +272,18 @@ async fn container_action(
     containers::action(&st, id, target, kind, name, action).await
 }
 
+// ---------- databases (PostgreSQL, MySQL, Redis in Docker) ----------
+
+#[tauri::command]
+async fn host_databases(st: State<'_, Usage>, id: String, target: ssh::Target) -> Result<dba::HostDatabases, String> {
+    dba::poll(&st, id, target).await
+}
+
+#[tauri::command]
+async fn redis_flush(st: State<'_, Usage>, id: String, target: ssh::Target, container: String) -> Result<String, String> {
+    dba::flush(&st, id, target, container).await
+}
+
 // ---------- keychain ----------
 
 #[tauri::command]
@@ -395,7 +418,7 @@ fn main() {
             sftp_connect, sftp_list, sftp_mkdir, sftp_rename, sftp_remove, sftp_download, sftp_upload, sftp_close,
             local_home, local_list, local_mkdir, local_rename, local_remove, local_copy,
             pf_start, pf_stop, key_generate, key_inspect, local_ssh_keys, host_stats, host_stats_forget,
-            host_containers, container_action, host_monitor, host_traefik, host_traefik_forget,
+            host_containers, container_action, host_databases, redis_flush, host_monitor, host_traefik, host_traefik_forget,
             pick_files, save_text_file, read_text_file, open_settings, ui_ready, shot_quick, sessions_reset
         ])
         .setup(move |app| {
