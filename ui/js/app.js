@@ -1,14 +1,33 @@
 // Starts the app: top tabs, vault side menu, pages, keyboard shortcuts and the settings window.
 (function () {
-  // Side menu order read from the original: Hosts, Keychain, Port Forwarding, Snippets, Known Hosts, Logs.
+  // Side menu order read from the original: Hosts, Keychain, Port Forwarding, Snippets, Known Hosts, Logs,
+  // with Servers (live numbers) and Containers (Docker / Easypanel), added at the person's request, right after Hosts.
   const VAULT_PAGES = [
     ["hosts", "Hosts", "hosts", () => App.hosts],
+    ["servers", "Servers", "pulse", () => App.servers],
+    ["containers", "Containers", "box", () => App.containers],
+    ["databases", "Databases", "database", () => App.databases],
+    ["cloudflare", "Cloudflare", "cloud", () => App.cloudflare],
     ["keychain", "Keychain", "keychain", () => App.keychain],
     ["forwarding", "Port Forwarding", "forward", () => App.forwarding],
     ["snippets", "Snippets", "snippets", () => App.snippets],
     ["known", "Known Hosts", "known", () => App.known],
     ["logs", "Logs", "logs", () => App.logs],
   ];
+  App.VAULT_PAGES = VAULT_PAGES.map((v) => ({ id: v[0], label: v[1], icon: v[2] }));
+  // Pages the person chose to show in the side menu (Hosts always stays).
+  const visiblePages = () => {
+    const hidden = App.data.settings.sidebarHidden || [];
+    return VAULT_PAGES.filter(([id]) => id === "hosts" || !hidden.includes(id));
+  };
+  const sidebarMode = () => App.data.settings.sidebarMode || "expanded";
+  App.applySidebar = () => {
+    const nav = document.getElementById("sidebar");
+    if (!nav || document.body.classList.contains("settings-window")) return;
+    nav.classList.toggle("closed", App.current !== "vaults" || sidebarMode() === "hidden");
+    nav.classList.toggle("collapsed", sidebarMode() === "collapsed");
+  };
+  App.setSidebarMode = (mode) => { App.data.settings.sidebarMode = mode; App.save(); App.applySidebar(); if (App.current === "vaults") drawSidebar(); };
   App.current = "vaults";
   App.vaultPage = "hosts";
   const pages = {};
@@ -22,6 +41,7 @@
     document.body.classList.toggle("light", App.data.settings.uiTheme === "light");
     document.body.classList.toggle("dark", App.data.settings.uiTheme !== "light");
     App.applyMotion();
+    App.applyLanguage();
   };
 
   // ---------- top tabs ----------
@@ -36,8 +56,11 @@
     vaultTab.onclick = () => App.openTab("vaults");
     const vaultChev = h("button", { class: "tab tab-chev" + (App.current === "vaults" ? " active" : ""), title: "Vault", html: Icon("chevron", 16) });
     vaultChev.onclick = (e) => App.menu(e, [
-      ...VAULT_PAGES.map(([id, label, icon]) => ({ name: label, icon, handler: () => App.openVaultPage(id) })),
+      ...visiblePages().map(([id, label, icon]) => ({ name: label, icon, handler: () => App.openVaultPage(id) })),
       "-",
+      sidebarMode() === "hidden"
+        ? { name: "Show sidebar", icon: "panel", handler: () => App.setSidebarMode("expanded") }
+        : { name: "Hide sidebar", icon: "panel", handler: () => App.setSidebarMode("hidden") },
       { name: "Settings", icon: "gear", hint: "Ctrl+,", handler: () => App.openSettings() },
     ]);
     bar.append(h("div", { class: "tab-split" }, vaultTab, vaultChev));
@@ -74,13 +97,18 @@
   const drawSidebar = () => {
     const nav = document.getElementById("sidebar");
     nav.innerHTML = "";
-    for (const [id, label, icon] of VAULT_PAGES) {
+    App.applySidebar();
+    const collapsed = sidebarMode() === "collapsed";
+    for (const [id, label, icon] of visiblePages()) {
       const b = h("button", { class: "nav-item" + (App.vaultPage === id ? " selected" : ""), title: label },
         h("span", { class: "nav-icon", html: Icon(icon, 16) }), h("span", { class: "nav-title" }, label));
       b.onclick = () => App.openVaultPage(id);
       nav.append(b);
     }
-    nav.append(h("div", { class: "nav-spacer" }),
+    const toggle = h("button", { class: "nav-item nav-toggle", title: collapsed ? "Expand menu" : "Collapse menu" },
+      h("span", { class: "nav-icon", html: Icon(collapsed ? "right" : "left", 16) }), h("span", { class: "nav-title" }, collapsed ? "Expand menu" : "Collapse menu"));
+    toggle.onclick = () => App.setSidebarMode(collapsed ? "expanded" : "collapsed");
+    nav.append(h("div", { class: "nav-spacer" }), toggle,
       h("div", { class: "nav-footer" }, h("div", { class: "free-badge" }, "Free"), h("div", {}, "All features unlocked. Your data stays on this computer.")));
   };
 
@@ -95,8 +123,9 @@
     App.closeOverlay();
     if (id !== "vaults" && App.slider.isOpen()) App.slider.close();
     document.querySelectorAll("#main > .page").forEach((p) => p.classList.add("hidden"));
-    document.getElementById("sidebar").classList.toggle("closed", id !== "vaults");
+    App.applySidebar();
     if (id === "vaults") {
+      if (!visiblePages().some((v) => v[0] === App.vaultPage)) App.vaultPage = "hosts";
       drawSidebar();
       const p = page(App.vaultPage);
       p.classList.remove("hidden");
@@ -271,7 +300,7 @@
 
   // ---------- start ----------
   const start = async () => {
-    const isSettings = location.hash.startsWith("#settings");
+    const isSettings = location.hash.startsWith("#settings") || (App.screenshotMode && App.screenshotView.startsWith("settings"));
     App.windowLabel = App.win() ? App.win().label : "main";
     await App.load();
     App.applyUiTheme();
@@ -282,7 +311,13 @@
       await App.load();
       App.applyUiTheme();
       if (isSettings) App.renderSettings(document.getElementById("main"));
-      else { App.terminal.applyAll(); if (!App.slider.isOpen()) App.refresh(); }
+      else {
+        App.terminal.applyAll();
+        App.applySidebar();
+        if (App.current === "vaults" && !visiblePages().some((v) => v[0] === App.vaultPage)) App.vaultPage = "hosts";
+        App.drawTabs();
+        if (!App.slider.isOpen()) App.refresh();
+      }
     });
 
     if (isSettings) {
@@ -299,12 +334,16 @@
     await App.invoke("sessions_reset").catch(() => {});
     App.terminal.init();
     App.usage.start();
+    App.containers.start();
+    App.databases.start();
+    App.cloudflare.start();
+    App.servers.start();
     window.addEventListener("keydown", onKey, true);
     App.openTab("vaults");
     if (App.screenshotMode) {
       const v = App.screenshotView;
       try {
-        if (["keychain", "forwarding", "snippets", "known", "logs"].includes(v)) App.openVaultPage(v);
+        if (["servers", "containers", "databases", "cloudflare", "keychain", "forwarding", "snippets", "known", "logs"].includes(v)) App.openVaultPage(v);
         else if (v === "sftp") App.openTab("sftp");
         else if (v === "local") App.terminal.openLocal();
         else if (v === "newhost") App.hosts.editHost(App.data.hosts[0]);

@@ -48,11 +48,15 @@
     fido: '<rect x="7" y="2" width="10" height="20" rx="3"/><circle cx="12" cy="8" r="2"/>',
     globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>',
     min: '<path d="M5 12h14"/>',
+    panel: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     max: '<rect x="5" y="5" width="14" height="14" rx="1"/>',
     check: '<path d="M5 12l5 5L20 7"/>',
     bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
     bell: '<path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/>',
+    pulse: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+    box: '<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+    database: '<ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
     cloud: '<path d="M7 18a4.5 4.5 0 01-.6-9A6 6 0 0118 9.5 4.3 4.3 0 0117.5 18z"/>',
   };
   // Filled shapes for the top tabs.
